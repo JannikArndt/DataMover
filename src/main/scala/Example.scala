@@ -1,5 +1,8 @@
+import java.sql.Timestamp
+
 import scala.concurrent.duration._
 import scala.language.postfixOps
+import de.jannikarndt.datamover._
 
 object Example {
     val job = new ExampleJob
@@ -12,36 +15,53 @@ class ExampleJob extends Job {
     val source2 = File.CSV("path/to/file.csv")
     val target1 = Database.Postgres("connectionString")
 
-    val sports = source1.GetTable[SportsTable]("SPORTS")
-    val hobbies = source2.GetTable[HobbyTable]()
-    val ballsports = target1.GetTable[BallSportTable]("BALLSPORTS")
+    val sports: Table[SportsTableEntry] = source1.GetTable[SportsTableEntry]("SPORTS")
+    val hobbies: Table[HobbyTableEntry] = source2.GetTable[HobbyTableEntry]()
+    val ballsports: Table[BallSportTableEntry] = target1.GetTable[BallSportTableEntry]("BALLSPORTS")
 
-    val filteredSports = sports.filter(_.withBall)
-    val filteredHobbies = hobbies.filter(_.fun > 4)
+    val newSports: Table[SportsTableEntry] = sports.getDeltaByTimestamp[BallSportTableEntry](ballsports, _.createTs, _.createTs)
+    val filteredSports: Table[SportsTableEntry] = newSports.filter(_.withBall)
 
-    val funWithBalls = filteredSports.joinHobbies(filteredHobbies)
+    val newHobbies: Table[HobbyTableEntry] = hobbies.getDeltaByID[BallSportTableEntry](ballsports, _.id, _.id)
+    val filteredHobbies: Table[HobbyTableEntry] = newHobbies.filter(_.fun > 4)
 
-    ballsports.InsertOrUpdate(funWithBalls)
+    val funWithBalls: Table[IntermediateBallSportTableEntry] = filteredSports.joinHobbies(filteredHobbies)
+
+    funWithBalls.extractDimension[ActivityTableEntry](_.activityType, _.activityID)
+
+    ballsports.InsertOrUpdate(funWithBalls.asInstanceOf[Table[BallSportTableEntry]])
 
     log("Success!")
 }
 
-class SportsTable(val tableName: String) extends Table[OracleTable] {
+class SportsTableEntry extends TableEntry {
     val name: String = ""
     val withBall: Boolean = true
-
-    def joinHobbies(hobbies: HobbyTable): BallSportTable = {
-        new BallSportTable
-    }
+    val createTs: Timestamp = Timestamp.valueOf("2017/01/02")
+    val activityType: String = "Outdoor"
 }
 
-class HobbyTable extends Table[CsvTable] {
+class HobbyTableEntry extends TableEntry {
+    val id: Int = 0
     val name: String = ""
     val fun: Int = 0
 }
 
-class BallSportTable extends Table[PostgresTable] {
+class BallSportTableEntry extends TableEntry {
+    val id: Int = 0
     val name: String = ""
     val withBall: Boolean = true
     val fun: Int = 0
+    val activityID = 4
+    val createTs: Timestamp = Timestamp.valueOf("2017/01/02")
+}
+
+class IntermediateBallSportTableEntry extends BallSportTableEntry {
+
+    val activityType: String = "Outdoor"
+}
+
+class ActivityTableEntry extends TableEntry {
+    val activityId = 0
+    val activityType = "Outdoor"
 }

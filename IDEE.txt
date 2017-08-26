@@ -1,0 +1,16 @@
+- Jobs
+    - Versionen, welche ist deployed?, change log, git, jira connection
+
+- schedules
+    - welcher job, welche version,
+
+- logging
+    - ausgaben pro job
+
+- monitoring
+    - ampel, anzahl gelesener und geschriebener elemente pro job
+    
+- governance
+    - vergangenheit aller runs, mit id-hash => zuordnung von row zu job
+    
+- feature toggles
