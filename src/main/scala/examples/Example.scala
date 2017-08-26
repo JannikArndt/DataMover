@@ -1,13 +1,15 @@
+package examples
+
 import java.sql.Timestamp
+
+import de.jannikarndt.datamover._
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import de.jannikarndt.datamover._
 
 object Example {
     val job = new ExampleJob
     job runEvery (10 minutes)
-    job logTo "mylogfile.log"
 }
 
 class ExampleJob extends Job {
@@ -25,13 +27,19 @@ class ExampleJob extends Job {
     val newHobbies: Table[HobbyTableEntry] = hobbies.getDeltaByID[BallSportTableEntry](ballsports, _.id, _.id)
     val filteredHobbies: Table[HobbyTableEntry] = newHobbies.filter(_.fun > 4)
 
-    val funWithBalls: Table[IntermediateBallSportTableEntry] = filteredSports.joinHobbies(filteredHobbies)
+//    val funWithBalls: Table[IntermediateBallSportTableEntry] = filteredSports.joinHobbies(filteredHobbies)
 
-    funWithBalls.extractDimension[ActivityTableEntry](_.activityType, _.activityID)
+//    funWithBalls.extractDimension[ActivityTableEntry](_.activityType, _.activityID)
 
-    ballsports.InsertOrUpdate(funWithBalls.asInstanceOf[Table[BallSportTableEntry]])
+//    ballsports.InsertOrUpdate(funWithBalls.asInstanceOf[Table[BallSportTableEntry]])
 
-    log("Success!")
+    logger.info("Success!")
+
+    override def run(): Unit = {
+
+    }
+
+    override val jobName: String = "Example"
 }
 
 class SportsTableEntry extends TableEntry {
