@@ -1,6 +1,7 @@
 package examples
 
-import de.jannikarndt.datamover.DataMover
+
+import de.jannikarndt.datamover.{DataMover, File}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -16,6 +17,10 @@ class Example2 extends DataMover("Example2") {
 
     override def run(): Unit = {
         logger.info("In Job")
+
+        val randomCount = scala.util.Random.nextInt(30)
+
+        File.append("output/foo.txt", randomCount.toString)
     }
 
 }

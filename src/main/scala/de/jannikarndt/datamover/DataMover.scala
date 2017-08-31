@@ -35,14 +35,9 @@ class JobWithClass(jobClass: Class[_ <: DataMover]) {
 abstract class DataMover(jobName: String) extends org.quartz.Job {
 
     protected val logger: Logger = Logger(LoggerFactory.getLogger(getClass.getName))
+    logger.info(s"Starting job $jobName")
 
     def run(): Unit
 
-    def initialLog(): Unit = {
-        logger.info(s"Starting job $jobName")
-    }
-
     override def execute(jobExecutionContext: JobExecutionContext): Unit = run()
-
-    initialLog()
 }
