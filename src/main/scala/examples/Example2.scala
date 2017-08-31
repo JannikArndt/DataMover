@@ -20,7 +20,13 @@ class Example2 extends DataMover("Example2") {
 
         val randomCount = scala.util.Random.nextInt(30)
 
+        monitor.input(randomCount)
+
         File.append("output/foo.txt", randomCount.toString)
+
+        monitor.output("Appended successfully")
+
+        dumpMonitor()
     }
 
 }
