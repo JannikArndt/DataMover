@@ -38,6 +38,13 @@
             <version>2.3.0</version>
         </dependency>
 
+        <!-- Dropwizard Server -->
+        <dependency>
+            <groupId>com.datasift.dropwizard.scala</groupId>
+            <artifactId>dropwizard-scala-jdbi_${scala.version.major}</artifactId>
+            <version>1.1.0-2</version>
+        </dependency>
+
         <!-- Slick -->
         <dependency>
             <groupId>com.typesafe.slick</groupId>
