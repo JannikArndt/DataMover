@@ -38,11 +38,16 @@
             <version>2.3.0</version>
         </dependency>
 
-        <!-- Dropwizard Server -->
+        <!-- Server -->
         <dependency>
-            <groupId>com.datasift.dropwizard.scala</groupId>
-            <artifactId>dropwizard-scala-jdbi_${scala.version.major}</artifactId>
-            <version>1.1.0-2</version>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.4.6.v20170531</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>9.4.6.v20170531</version>
         </dependency>
 
         <!-- Slick -->

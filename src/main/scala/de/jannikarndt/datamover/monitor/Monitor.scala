@@ -5,7 +5,10 @@ import java.time.{LocalDateTime, ZoneOffset}
 import scala.collection.mutable
 
 object Monitor {
-    private val monitors: mutable.Map[String, Monitor] = mutable.Map[String, Monitor]()
+    val monitors: mutable.Map[String, Monitor] = mutable.Map[String, Monitor]()
+
+    val servlet = new EmbeddedServlet()
+    servlet.start()
 
     def getMonitor(className: String): Monitor = {
         monitors.getOrElseUpdate(className, new Monitor(className))

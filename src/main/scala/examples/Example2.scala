@@ -25,8 +25,6 @@ class Example2 extends DataMover("Example2") {
         File.append("output/foo.txt", randomCount.toString)
 
         monitor.output("Appended successfully")
-
-        dumpMonitor()
     }
 
 }

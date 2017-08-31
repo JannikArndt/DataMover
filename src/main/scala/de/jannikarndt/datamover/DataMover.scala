@@ -8,9 +8,12 @@ import org.quartz.impl.StdSchedulerFactory
 import org.quartz.{JobBuilder, JobExecutionContext, SimpleScheduleBuilder, TriggerBuilder}
 import org.slf4j.LoggerFactory
 
+import scala.collection.mutable
 import scala.concurrent.duration.Duration
 
 object DataMover {
+    var loggers: mutable.MutableList[customLogger] = mutable.MutableList[customLogger]()
+
     def run(jobClass: Class[_ <: DataMover]): JobWithClass = {
         new JobWithClass(jobClass)
     }
@@ -34,14 +37,26 @@ class JobWithClass(jobClass: Class[_ <: DataMover]) {
 }
 
 abstract class DataMover(jobName: String) extends org.quartz.Job with Monitoring {
-    protected val logger: Logger = Logger(LoggerFactory.getLogger(getClass.getName))
+//    protected val logger: Logger = Logger(LoggerFactory.getLogger(getClass.getName))
+    protected val logger = new customLogger(getClass.getName)
 
     logger.info(s"Starting job $jobName")
 
     def run(): Unit
 
     override def execute(jobExecutionContext: JobExecutionContext): Unit = run()
-
-    def dumpMonitor(): Unit = logger.info(monitor.dump())
 }
 
+class customLogger(name: String){
+    protected var logger: Logger = Logger(LoggerFactory.getLogger(name))
+
+    val logMessages: mutable.MutableList[String] = mutable.MutableList[String]()
+
+    DataMover.loggers += this
+
+    def info(message: String): Unit = {
+        logMessages += message
+        logger.info(message)
+    }
+
+}
