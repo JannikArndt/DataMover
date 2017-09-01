@@ -1,5 +1,6 @@
 package de.jannikarndt.datamover
 
+import java.time.LocalDateTime
 import java.util.Date
 
 import com.typesafe.scalalogging.Logger
@@ -47,8 +48,9 @@ abstract class DataMover(jobName: String) extends org.quartz.Job with Monitoring
     override def execute(jobExecutionContext: JobExecutionContext): Unit = run()
 }
 
-class customLogger(name: String){
-    protected var logger: Logger = Logger(LoggerFactory.getLogger(name))
+class customLogger(val name: String){
+    val started: LocalDateTime = LocalDateTime.now
+    protected val logger: Logger = Logger(LoggerFactory.getLogger(name))
 
     val logMessages: mutable.MutableList[String] = mutable.MutableList[String]()
 
