@@ -5,7 +5,8 @@ import java.time.temporal.ChronoUnit
 import javax.servlet.http.{HttpServlet, HttpServletRequest, HttpServletResponse}
 
 import com.typesafe.scalalogging.Logger
-import de.jannikarndt.datamover.{DataMover, customLogger}
+import de.jannikarndt.datamover.DataMover
+import de.jannikarndt.datamover.logging.CustomLogger
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 import org.slf4j.LoggerFactory
@@ -102,7 +103,7 @@ object sites {
 
     def getLoggerHtml: String = {
 
-        val loggingGroups = getLoggingGroups
+        val loggingGroups = CustomLogger.getLoggingGroups
 
         """<div class="bd-example bd-example-tabs" role="tabpanel">""" +
             """<ul class="nav nav-tabs" role="tablist">""" +
@@ -114,7 +115,7 @@ object sites {
             """</div></div>"""
     }
 
-    def getLoggerMenuItem(loggerGroup: Seq[customLogger], active: Boolean = false): String =
+    def getLoggerMenuItem(loggerGroup: Seq[CustomLogger], active: Boolean = false): String =
         s"""
            |<li class="nav-item dropdown">
            |  <a class="nav-link dropdown-toggle${if (active) " active" else ""}" data-toggle="dropdown" href="#"
@@ -124,7 +125,7 @@ object sites {
                 s"""<a class="dropdown-item" data-toggle="tab" href="#${toLink(logger.started.toString)}">${logger.startedFormatted}</a>""").mkString(EOL) +
             s"""</div></li>"""
 
-    def getLoggerTabItems(loggerGroup: Seq[customLogger], active: Boolean = false): String = {
+    def getLoggerTabItems(loggerGroup: Seq[CustomLogger], active: Boolean = false): String = {
         if (active) {
             loggerGroup.take(1).map(logger => getLoggerTabItem(logger, true)).mkString(EOL) +
                 loggerGroup.drop(1).map(logger => getLoggerTabItem(logger, false)).mkString(EOL)
@@ -133,85 +134,10 @@ object sites {
             loggerGroup.map(logger => getLoggerTabItem(logger)).mkString(EOL)
     }
 
-    def getLoggerTabItem(logger: customLogger, active: Boolean = false): String = {
+    def getLoggerTabItem(logger: CustomLogger, active: Boolean = false): String = {
         s"""<div class="tab-pane${if (active) " active" else ""}" id="${toLink(logger.started.toString)}" role="tabpanel">""" +
             s"""<pre>${logger.logMessages.mkString(EOL)}</pre></div>"""
     }
 
     def toLink(text: String): String = "tab" + text.toLowerCase.replaceAll("""[^a-zA-Z\d]""", "")
-
-    def getLoggingGroups: Seq[Seq[customLogger]] = {
-
-        val (result1, oldest) = getLoggingIntervals(DataMover.loggers)
-        val (result2, secondButOldest) = getLoggingIntervals(oldest)
-        val (result3, thirdButOldest) = getLoggingIntervals(secondButOldest)
-        val (result4, fourthButOldest) = getLoggingIntervals(thirdButOldest)
-
-        val seq = Seq(fourthButOldest, result4, result3, result2, result1)
-        logger.info(seq.mkString(EOL))
-        seq.filterNot(_.isEmpty)
-    }
-
-    def getLoggingIntervals(loggers: Seq[customLogger]): (Seq[customLogger], Seq[customLogger]) = {
-        if (loggers.isEmpty) {
-            logger.info(s"Loggers length: 0. Returning")
-            return (Seq.empty, Seq.empty)
-        }
-
-        val firstPivotPoint = (loggers.length * 0.5).toInt
-        val firstPivotElement = loggers.slice(firstPivotPoint, firstPivotPoint + 1).head
-
-
-        logger.info(s"Loggers length: ${loggers.length}")
-        logger.info(s"First point: $firstPivotPoint")
-        logger.info(s"First pivot: ${firstPivotElement.started.toString}")
-        logger.info(s"loggers.last.started: ${loggers.last.started}")
-        logger.info(s"firstPivotElement.started: ${firstPivotElement.started}")
-        logger.info(s"Seconds between = ${ChronoUnit.SECONDS.between(firstPivotElement.started, loggers.last.started)}")
-
-        if (ChronoUnit.WEEKS.between(firstPivotElement.started, loggers.last.started) > 1) {
-            logger.info(s"Split by WEEKS")
-            val thisWeek: LocalDateTime = LocalDateTime.now().minus(1, ChronoUnit.WEEKS).truncatedTo(ChronoUnit.WEEKS)
-            val elementsBeforeThisWeek = loggers.filter(_.started.isBefore(thisWeek))
-            val elementsFromThisWeek = loggers.filter(_.started.isAfter(thisWeek))
-            (elementsBeforeThisWeek, elementsFromThisWeek)
-        }
-        else if (ChronoUnit.DAYS.between(firstPivotElement.started, loggers.last.started) > 1) {
-            logger.info(s"Split by DAYS")
-            val today: LocalDateTime = LocalDateTime.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS)
-            val elementsBeforeToday = loggers.filter(_.started.isBefore(today))
-            val elementsFromToday = loggers.filter(_.started.isAfter(today))
-            (elementsBeforeToday, elementsFromToday)
-        }
-        else if (ChronoUnit.HOURS.between(firstPivotElement.started, loggers.last.started) > 1) {
-            logger.info(s"Split by HOURS")
-            val thisHour: LocalDateTime = LocalDateTime.now().minus(1, ChronoUnit.HOURS).truncatedTo(ChronoUnit.HOURS)
-            val elementsBeforeThisHour = loggers.filter(_.started.isBefore(thisHour))
-            val elementsFromThisHour = loggers.filter(_.started.isAfter(thisHour))
-            (elementsBeforeThisHour, elementsFromThisHour)
-        }
-        else if (ChronoUnit.MINUTES.between(firstPivotElement.started, loggers.last.started) > 1) {
-            logger.info(s"Split by MINUTES")
-            val thisMinute: LocalDateTime = LocalDateTime.now().minus(1, ChronoUnit.MINUTES).truncatedTo(ChronoUnit.MINUTES)
-            val elementsBeforeThisMinute = loggers.filter(_.started.isBefore(thisMinute))
-            val elementsFromThisMinute = loggers.filter(_.started.isAfter(thisMinute))
-            (elementsBeforeThisMinute, elementsFromThisMinute)
-        }
-        else if (ChronoUnit.SECONDS.between(firstPivotElement.started, loggers.last.started) > 1) {
-            logger.info(s"Split by SECONDS")
-            val thisSecond: LocalDateTime = LocalDateTime.now().minus(1, ChronoUnit.SECONDS).truncatedTo(ChronoUnit.SECONDS)
-            logger.info(s"thisSecond = $thisSecond")
-            val elementsBeforeThisSecond = loggers.filter(_.started.isBefore(thisSecond))
-            logger.info(s"elementsBeforeThisSecond = ${elementsBeforeThisSecond.map(_.started.toString)}")
-            val elementsFromThisSecond = loggers.filter(_.started.isAfter(thisSecond))
-            logger.info(s"elementsFromThisSecond = ${elementsFromThisSecond.map(_.started.toString)}")
-            (elementsBeforeThisSecond, elementsFromThisSecond)
-        }
-        else {
-            logger.info(s"Not split")
-            (loggers, Seq.empty)
-        }
-    }
-
-
 }

@@ -3,18 +3,14 @@ package de.jannikarndt.datamover
 import java.time.LocalDateTime
 import java.util.Date
 
-import com.typesafe.scalalogging.Logger
+import de.jannikarndt.datamover.logging.CustomLogger
 import de.jannikarndt.datamover.monitor.Monitoring
 import org.quartz.impl.StdSchedulerFactory
 import org.quartz.{JobBuilder, JobExecutionContext, SimpleScheduleBuilder, TriggerBuilder}
-import org.slf4j.LoggerFactory
 
-import scala.collection.mutable
 import scala.concurrent.duration.Duration
 
 object DataMover {
-    var loggers: mutable.MutableList[customLogger] = mutable.MutableList[customLogger]()
-
     def run(jobClass: Class[_ <: DataMover]): JobWithClass = {
         new JobWithClass(jobClass)
     }
@@ -38,31 +34,11 @@ class JobWithClass(jobClass: Class[_ <: DataMover]) {
 }
 
 abstract class DataMover(jobName: String) extends org.quartz.Job with Monitoring {
-//    protected val logger: Logger = Logger(LoggerFactory.getLogger(getClass.getName))
-    protected val logger = new customLogger(getClass.getName)
+    protected val logger = new CustomLogger(getClass.getName)
 
     logger.info(s"Starting job $jobName at ${LocalDateTime.now}")
 
     def run(): Unit
 
     override def execute(jobExecutionContext: JobExecutionContext): Unit = run()
-}
-
-class customLogger(val name: String){
-    val started: LocalDateTime = LocalDateTime.now
-    protected val logger: Logger = Logger(LoggerFactory.getLogger(name))
-
-    val logMessages: mutable.MutableList[String] = mutable.MutableList[String]()
-
-    DataMover.loggers += this
-
-    def info(message: String): Unit = {
-        logMessages += message
-        logger.info(message)
-    }
-
-    import java.time.format.DateTimeFormatter
-
-    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-    def startedFormatted: String = started.format(formatter)
 }
