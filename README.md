@@ -4,6 +4,16 @@ Out of the box scheduling, logging, monitoring and data governance.
 
 [![Build Status](https://travis-ci.org/JannikArndt/DataMover.svg?branch=master)](https://travis-ci.org/JannikArndt/DataMover)
 
+### Getting DataMover
+
+```xml
+<dependency>
+  <groupId>de.jannikarndt</groupId>
+  <artifactId>datamover</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
 ### Example:
 
 ```scala
@@ -37,6 +47,10 @@ class Example extends DataMover("Example") {
 }
 ```
 
+### License
+
+This code is open source software licensed under the [MIT License](LICENSE).
+
 ### To-Do / Planned
 
 - Data Governance
@@ -52,3 +66,12 @@ class Example extends DataMover("Example") {
 - Interface for Prometheus/Grafana
 - Interface for Elastic/Kibana
 - Interface for Jolokia
+
+### Deploy to Sonatype
+Run
+
+```bash
+mvn source:jar verify gpg:sign install:install deploy:deploy
+```
+
+and then head to [https://oss.sonatype.org/#stagingRepositories](sonatype.org), `Close` the repository and `Release it.
