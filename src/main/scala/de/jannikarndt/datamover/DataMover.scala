@@ -41,7 +41,7 @@ abstract class DataMover(jobName: String) extends org.quartz.Job with Monitoring
 //    protected val logger: Logger = Logger(LoggerFactory.getLogger(getClass.getName))
     protected val logger = new customLogger(getClass.getName)
 
-    logger.info(s"Starting job $jobName")
+    logger.info(s"Starting job $jobName at ${LocalDateTime.now}")
 
     def run(): Unit
 
@@ -61,4 +61,8 @@ class customLogger(val name: String){
         logger.info(message)
     }
 
+    import java.time.format.DateTimeFormatter
+
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+    def startedFormatted: String = started.format(formatter)
 }

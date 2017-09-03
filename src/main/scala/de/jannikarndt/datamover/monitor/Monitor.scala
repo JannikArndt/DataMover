@@ -16,11 +16,11 @@ object Monitor {
 }
 
 class Monitor(name: String) {
-    private var inputLong = mutable.Map(LocalDateTime.now() -> 0L)
-    private var inputString = mutable.Map(LocalDateTime.now() -> "")
+    private var inputLong = mutable.Map[LocalDateTime, Long]()
+    private var inputString = mutable.Map[LocalDateTime, String]()
 
-    private var outputLong = mutable.Map(LocalDateTime.now() -> 0L)
-    private var outputString = mutable.Map(LocalDateTime.now() -> "")
+    private var outputLong = mutable.Map[LocalDateTime, Long]()
+    private var outputString = mutable.Map[LocalDateTime, String]()
 
     def input(number: Long): Unit = inputLong += (LocalDateTime.now() -> number)
 
@@ -30,13 +30,11 @@ class Monitor(name: String) {
 
     def output(text: String): Unit = outputString += (LocalDateTime.now() -> text)
 
-    def dump(): String = {
-        implicit val localDateOrdering: Ordering[LocalDateTime] = Ordering.by(_.toEpochSecond(ZoneOffset.UTC))
+    implicit val localDateOrdering: Ordering[LocalDateTime] = Ordering.by(_.toEpochSecond(ZoneOffset.UTC))
 
-        def makeString(map: collection.Map[_ <: LocalDateTime, _ <: Any]) = map.toList.sortBy(_._1).map(_.productIterator.mkString("\t")).mkString("\n")
+    private def makeString(map: collection.Map[_ <: LocalDateTime, _ <: Any]) = map.toList.sortBy(_._1).map(_.productIterator.mkString("\t")).mkString("\n")
 
-        val in = makeString(inputLong.mapValues(x => x.toString) ++ inputString)
-        val out = makeString(outputLong.mapValues(x => x.toString) ++ outputString)
-        s"Input: \n$in\nOutput: \n$out"
-    }
+    def dumpIn: String = makeString(inputLong.mapValues(x => x.toString) ++ inputString)
+
+    def dumOut: String = makeString(outputLong.mapValues(x => x.toString) ++ outputString)
 }
