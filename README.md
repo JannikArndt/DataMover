@@ -37,6 +37,10 @@ class Example extends DataMover("Example") {
 
 ### To-Do / Planned
 
+- Data Governance
+- Alerting when job fails
+- Uptime-Monitoring for sources and sinks
+
 - Interface for Prometheus/Grafana
 - Interface for Elastic/Kibana
 - Interface for Jolokia
