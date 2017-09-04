@@ -71,7 +71,7 @@ This code is open source software licensed under the [MIT License](LICENSE).
 Run
 
 ```bash
-mvn source:jar verify gpg:sign install:install deploy:deploy
+mvn clean package source:jar gpg:sign install:install deploy:deploy
 ```
 
 and then head to [https://oss.sonatype.org/#stagingRepositories](sonatype.org), `Close` the repository and `Release it.
