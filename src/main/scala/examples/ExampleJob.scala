@@ -1,19 +1,19 @@
 package examples
 
 
-import de.jannikarndt.datamover.{DataMover, File}
+import de.jannikarndt.datamover.DataMover
+import de.jannikarndt.datamover.io.File
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-
 object ExampleJob {
 
-    def main(args: Array[String]): Unit = DataMover run classOf[Example2] every (10 seconds)
+    def main(args: Array[String]): Unit = DataMover run classOf[ExampleJob] every (10 seconds)
 
 }
 
-class Example2 extends DataMover("Example2") {
+class ExampleJob extends DataMover("ExampleJob") {
 
     override def run(): Unit = {
         logger.info("In Job")

@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/datamover.iml" filepath="$PROJECT_DIR$/.idea/modules/datamover.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/datamover-build.iml" filepath="$PROJECT_DIR$/.idea/modules/datamover-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/datamover_2.12.iml" filepath="$PROJECT_DIR$/datamover_2.12.iml" />
     </modules>
   </component>
 </project>

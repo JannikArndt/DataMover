@@ -1,4 +1,4 @@
-package de.jannikarndt.datamover
+package de.jannikarndt.datamover.io
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, OpenOption, Paths, StandardOpenOption}

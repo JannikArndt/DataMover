@@ -7,10 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="datamover" />
+        <module name="datamover_2.12" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="datamover" target="1.5" />
+      <module name="datamover_2.12" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

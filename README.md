@@ -10,7 +10,7 @@ Out of the box scheduling, logging, monitoring and data governance.
 <dependency>
   <groupId>de.jannikarndt</groupId>
   <artifactId>datamover</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -22,10 +22,10 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 
 object ExampleJob {
-    def main(args: Array[String]): Unit = DataMover run classOf[Example] every (10 seconds)
+    def main(args: Array[String]): Unit = DataMover run classOf[ExampleJob] every (10 seconds)
 }
 
-class Example extends DataMover("Example") {
+class ExampleJob extends DataMover("ExampleJob") {
 
     override def run(): Unit = {
     
@@ -68,10 +68,27 @@ This code is open source software licensed under the [MIT License](LICENSE).
 - Interface for Jolokia
 
 ### Deploy to Sonatype
-Run
+
+#### Snapshot
+Run 
+
+```bash
+mvn clean deploy
+```
+
+#### Release
+
+Removed the `-SNAPSHOT` from the version in `pom.xml` and run
 
 ```bash
 mvn clean package source:jar gpg:sign install:install deploy:deploy
 ```
 
-and then head to [https://oss.sonatype.org/#stagingRepositories](sonatype.org), `Close` the repository and `Release it.
+and then head to [https://oss.sonatype.org/#stagingRepositories](sonatype.org), `Close` the repository and `Release` it.
+
+### Changes
+
+#### v1.1.0
+- Upgrade to scala 2.12.3
+- Removed unnecessary dependencies
+- Removed old files
