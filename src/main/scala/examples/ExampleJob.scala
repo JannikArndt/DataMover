@@ -2,6 +2,7 @@ package examples
 
 
 import de.jannikarndt.datamover.DataMover
+import de.jannikarndt.datamover.governance.{GovernedID, Governor}
 import de.jannikarndt.datamover.io.File
 
 import scala.concurrent.duration._
@@ -15,8 +16,8 @@ object ExampleJob {
 
 class ExampleJob extends DataMover("ExampleJob") {
 
-    override def run(): Unit = {
-        logger.info("In Job")
+    override def run(id: GovernedID): Unit = {
+        logger.info(s"In Job $id")
 
         val randomCount = scala.util.Random.nextInt(30)
 

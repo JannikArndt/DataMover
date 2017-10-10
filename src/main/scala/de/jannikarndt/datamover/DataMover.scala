@@ -3,12 +3,15 @@ package de.jannikarndt.datamover
 import java.time.LocalDateTime
 import java.util.Date
 
+import de.jannikarndt.datamover.governance.{GovernedID, Governor}
 import de.jannikarndt.datamover.logging.CustomLogger
 import de.jannikarndt.datamover.monitor.Monitoring
 import de.jannikarndt.datamover.server.EmbeddedServer
 import org.quartz.impl.StdSchedulerFactory
 import org.quartz.{JobBuilder, JobExecutionContext, SimpleScheduleBuilder, TriggerBuilder}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
 object DataMover {
@@ -39,10 +42,17 @@ class JobWithClass(jobClass: Class[_ <: DataMover]) {
 
 abstract class DataMover(jobName: String) extends org.quartz.Job with Monitoring {
     protected val logger = new CustomLogger(getClass.getName)
+    protected val id: Future[GovernedID] = Governor.getId("Example")
 
     logger.info(s"Starting job $jobName at ${LocalDateTime.now}")
 
-    def run(): Unit
+    def run(id: GovernedID): Unit
 
-    override def execute(jobExecutionContext: JobExecutionContext): Unit = run()
+    override def execute(jobExecutionContext: JobExecutionContext): Unit = {
+
+        id.map { gId =>
+            logger.id = gId
+            run(gId)
+        }
+    }
 }

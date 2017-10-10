@@ -10,11 +10,15 @@ import scala.collection.mutable
 import scala.compat.Platform.EOL
 import java.time.format.DateTimeFormatter
 
+import de.jannikarndt.datamover.governance.GovernedID
+
 class CustomLogger(val name: String) {
     val started: LocalDateTime = LocalDateTime.now
     protected val logger: Logger = Logger(LoggerFactory.getLogger(name))
 
     val logMessages: mutable.MutableList[String] = mutable.MutableList[String]()
+
+    var id: GovernedID = _
 
     CustomLogger.allLoggers += this
 

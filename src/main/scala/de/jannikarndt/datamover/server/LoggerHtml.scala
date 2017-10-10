@@ -40,6 +40,7 @@ object LoggerHtml {
 
     def getLoggerTabItem(logger: CustomLogger, active: Boolean = false): String = {
         s"""<div class="tab-pane${if (active) " active" else ""}" id="${toLink(logger.started.toString)}" role="tabpanel">""" +
+            s"""ID <i>${logger.id.identifier.toString}</i>""" +
             s"""<pre>${logger.logMessages.mkString(EOL)}</pre></div>"""
     }
 
