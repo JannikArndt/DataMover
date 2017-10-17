@@ -7,7 +7,7 @@
     <groupId>de.jannikarndt</groupId>
     <artifactId>datamover_2.12</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.0</version>
+    <version>1.3.0-SNAPSHOT</version>
 
     <name>DataMover</name>
     <description>Out of the box scheduling, logging, monitoring and data governance.</description>
