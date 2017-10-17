@@ -13,7 +13,7 @@ import scala.collection.mutable
 import scala.compat.Platform.EOL
 
 case class LogMessage(level: LogLevel, dateTime: LocalDateTime, message: String) {
-    override def toString: String = s"${dateTime.toString} - ${level.getLabel.toUpperCase.padTo(5, "")}: $message"
+    override def toString: String = s"${dateTime.toString} - ${level.getLabel.toUpperCase.padTo(5, ' ')}: $message"
 }
 
 class CustomLogger(val name: String) {
