@@ -18,6 +18,7 @@ Out of the box scheduling, logging, monitoring and data governance.
 
 ```scala
 import de.jannikarndt.datamover._
+import de.jannikarndt.datamover.governance.GovernedID
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
@@ -27,8 +28,12 @@ object ExampleJob {
 
 class ExampleJob extends DataMover("ExampleJob") {
 
-    override def run(): Unit = {
-    
+    override def run(governedId: GovernedID): Unit = {
+        // here you can access
+        // - logger => Log debug, info or error information
+        // - monitor => track throughput
+        // - governedId => append this to your output to find the job that generated it
+
         // Logging
         logger.info("Logs are aggregated per run")
 
@@ -91,6 +96,11 @@ and then head to [sonatype.org](https://oss.sonatype.org/#stagingRepositories), 
 Releases are deployed at [maven.org](https://repo1.maven.org/maven2/de/jannikarndt/datamover/).
 
 ### Changes
+
+#### v1.2.0
+- Logger now supports ERROR, WARN and DEBUG
+- Governor write valid json
+- artifact id contains scala version
 
 #### v1.1.0
 - Upgrade to scala 2.12.3
