@@ -9,9 +9,15 @@ Out of the box scheduling, logging, monitoring and data governance.
 ```xml
 <dependency>
   <groupId>de.jannikarndt</groupId>
-  <artifactId>datamover</artifactId>
-  <version>1.1.0</version>
+  <artifactId>datamover_2.12</artifactId>
+  <version>1.2.0</version>
 </dependency>
+```
+
+or
+
+```sbtshell
+libraryDependencies += "de.jannikarndt" % "datamover" % "1.1.0"
 ```
 
 ### Example:
@@ -72,28 +78,10 @@ This code is open source software licensed under the [MIT License](LICENSE).
 - Interface for Elastic/Kibana
 - Interface for Jolokia
 
-### Deploy to Sonatype
+### Deployment
 
-#### Snapshot
-Run 
-
-```bash
-mvn clean deploy
-```
-
-Snapshots are deployed at [oss.sonatype.org](https://oss.sonatype.org/content/repositories/snapshots/de/jannikarndt/datamover/).
-
-#### Release
-
-Removed the `-SNAPSHOT` from the version in `pom.xml` and run
-
-```bash
-mvn clean package source:jar gpg:sign install:install deploy:deploy
-```
-
-and then head to [sonatype.org](https://oss.sonatype.org/#stagingRepositories), `Close` the repository and `Release` it.
-
-Releases are deployed at [maven.org](https://repo1.maven.org/maven2/de/jannikarndt/datamover/).
+Snapshots are deployed at [oss.sonatype.org](https://oss.sonatype.org/content/repositories/snapshots/de/jannikarndt/datamover_2.12/).
+Releases are deployed at [maven.org](https://repo1.maven.org/maven2/de/jannikarndt/datamover_2.12/).
 
 ### Changes
 
