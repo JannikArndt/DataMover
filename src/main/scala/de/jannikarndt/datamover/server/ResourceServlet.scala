@@ -13,7 +13,7 @@ class ResourceServlet extends HttpServlet {
     protected val logger: Logger = Logger(LoggerFactory.getLogger(getClass.getName))
 
     override def doGet(request: HttpServletRequest, response: HttpServletResponse): Unit = {
-        logger.info(s"Requesting ${request.getRequestURI}")
+        logger.debug(s"Requesting ${request.getRequestURI}")
         response.setContentType("text/html")
         response.getWriter.write(getResource(request.getRequestURI.stripPrefix("/")))
     }

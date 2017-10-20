@@ -3,24 +3,30 @@ package de.jannikarndt.datamover
 import java.time.LocalDateTime
 import java.util.Date
 
+import com.typesafe.scalalogging.Logger
 import de.jannikarndt.datamover.governance.{GovernedID, Governor}
 import de.jannikarndt.datamover.logging.CustomLogger
 import de.jannikarndt.datamover.monitor.Monitoring
 import de.jannikarndt.datamover.server.EmbeddedServer
 import org.quartz.impl.StdSchedulerFactory
 import org.quartz.{JobBuilder, JobExecutionContext, SimpleScheduleBuilder, TriggerBuilder}
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
 object DataMover {
+    protected val logger: Logger = Logger(LoggerFactory.getLogger("DataMoverCore"))
+
     def run(jobClass: Class[_ <: DataMover]): JobWithClass = {
         new JobWithClass(jobClass)
     }
 
     val server = new EmbeddedServer()
     server.start()
+
+    logger.info(s"Server listening on port ${server.port}")
+
 }
 
 class JobWithClass(jobClass: Class[_ <: DataMover]) {
