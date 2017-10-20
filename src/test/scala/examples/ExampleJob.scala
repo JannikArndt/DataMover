@@ -2,7 +2,6 @@ package examples
 
 
 import de.jannikarndt.datamover.DataMover
-import de.jannikarndt.datamover.governance.GovernedID
 import de.jannikarndt.datamover.io.File
 import play.api.libs.json.{JsValue, Json}
 
@@ -20,22 +19,22 @@ object ExampleJob {
 class ExampleJob extends DataMover("ExampleJob") {
 
     // `run` is being executed everytime the job is scheduled
-    override def run(governedId: GovernedID): Unit = {
+    override def run(): Unit = {
         // here you can access
         // - logger => Log debug, info or error information
         // - monitor => track throughput
         // - governedId => append this to your output to find the job that generated it
 
-        logger.info(s"Job with $governedId is starting…")
+        logger.info(s"Job with ${governedId.identifier} is starting…")
 
         val randomUser: BufferedSource = Source.fromURL("https://randomuser.me/api/")
         val user: JsValue = Json.parse(randomUser.mkString)
-        val name = user \\ "first" head
+        val name = s"${user \\ "first" head} ${user \\ "last" head}".replace("\"", "")
 
         monitor.input(1)
-        logger.info(s"Found user $name ${user \\ "last" head}")
+        logger.info(s"Found user $name")
 
-        File.append("output/foo.txt", s"New user: ${name.toString()} (by job $governedId)\n")
+        File.append("output/foo.txt", s"New user: $name (by job $governedId)\n")
 
         monitor.output(s"Appended user $name successfully")
     }

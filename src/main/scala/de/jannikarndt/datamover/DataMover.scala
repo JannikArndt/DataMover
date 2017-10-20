@@ -42,17 +42,18 @@ class JobWithClass(jobClass: Class[_ <: DataMover]) {
 
 abstract class DataMover(jobName: String) extends org.quartz.Job with Monitoring {
     protected val logger = new CustomLogger(getClass.getName)
-    private val id: Future[GovernedID] = Governor.getId("Example")
+    var governedId: GovernedID = _
 
-    logger.info(s"Starting job $jobName at ${LocalDateTime.now}")
+    logger.debug(s"Starting job $jobName at ${LocalDateTime.now}")
 
-    def run(governedId: GovernedID): Unit
+    def run(): Unit
 
     override def execute(jobExecutionContext: JobExecutionContext): Unit = {
 
-        id.map { gId =>
+        Governor.getId(jobName).map { gId =>
             logger.id = gId
-            run(gId)
+            governedId = gId
+            run()
         }
     }
 }
