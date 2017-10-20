@@ -2,6 +2,8 @@ package de.jannikarndt.datamover.monitor
 
 import java.time.{LocalDateTime, ZoneOffset}
 
+import io.prometheus.client.{Counter, Gauge}
+
 import scala.collection.mutable
 
 object Monitor {
@@ -19,11 +21,19 @@ class Monitor(name: String) {
     private var outputLong = mutable.Map[LocalDateTime, Long]()
     private var outputString = mutable.Map[LocalDateTime, String]()
 
-    def input(number: Long): Unit = inputLong += (LocalDateTime.now() -> number)
+    private val gauge = Gauge.build(name.replaceAll("""[^a-zA-Z\d]*""", ""), s"Gauge for $name").register()
+
+    def input(number: Long): Unit = {
+        inputLong += (LocalDateTime.now() -> number)
+        gauge.set(number)
+    }
 
     def input(text: String): Unit = inputString += (LocalDateTime.now() -> text)
 
-    def output(number: Long): Unit = outputLong += (LocalDateTime.now() -> number)
+    def output(number: Long): Unit = {
+        outputLong += (LocalDateTime.now() -> number)
+        gauge.set(number)
+    }
 
     def output(text: String): Unit = outputString += (LocalDateTime.now() -> text)
 

@@ -21,6 +21,7 @@ class EmbeddedServer() {
     context.addServlet(new ServletHolder(new ResourceServlet), "*.js")
     context.addServlet(new ServletHolder(new ResourceServlet), "*.css")
     context.addServlet(new ServletHolder(new HtmlServlet), "/")
+    context.addServlet(new ServletHolder(new PrometheusServlet), "/metrics")
 
     def start(): Unit = server.start()
 
