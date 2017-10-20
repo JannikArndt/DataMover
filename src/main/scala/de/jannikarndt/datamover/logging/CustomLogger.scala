@@ -12,6 +12,17 @@ import scala.collection.mutable
 
 case class LogMessage(level: LogLevel, dateTime: LocalDateTime, message: String) {
     override def toString: String = s"${dateTime.toString} - ${level.getLabel.toUpperCase.padTo(5, ' ')}: $message"
+
+    def toHtml = s"""<pre style="color:${LogMessage.colors(level)}">$toString</pre>"""
+}
+
+object LogMessage {
+    private val colors = Map(
+        LogLevel.ERROR -> "red",
+        LogLevel.WARN -> "orangered",
+        LogLevel.INFO -> "black",
+        LogLevel.DEBUG -> "lightblue"
+    )
 }
 
 class CustomLogger(val name: String) {

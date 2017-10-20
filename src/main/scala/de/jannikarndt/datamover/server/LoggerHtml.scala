@@ -20,8 +20,8 @@ object LoggerHtml {
 
     def getLoggerTabItem(logger: CustomLogger, active: Boolean = false): String = {
         s"""<div class="tab-pane${if (active) " show active" else ""}" id="${toLink(logger.started.toString)}" role="tabpanel">""" +
-            s"""ID <i>${logger.id.identifier.toString}</i>""" +
-            s"""<pre>${logger.logMessages.mkString(EOL)}</pre></div>"""
+            s"""<strong>ID <i>${logger.id.identifier.toString}</i></strong>""" +
+            s"""${logger.logMessages.map(_.toHtml).mkString}</div>"""
     }
 
     def toLink(text: String): String = "tab" + text.toLowerCase.replaceAll("""[^a-zA-Z\d]""", "")
