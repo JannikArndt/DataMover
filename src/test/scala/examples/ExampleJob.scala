@@ -36,6 +36,7 @@ class ExampleJob extends DataMover("ExampleJob") {
 
         File.append("output/foo.txt", s"New user: $name (by job $governedId)\n")
 
+        monitor.output(1)
         monitor.output(s"Appended user $name successfully")
     }
 
