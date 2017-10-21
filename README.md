@@ -1,6 +1,8 @@
 # DataMover
 
-Out of the box scheduling, logging, monitoring and data governance.
+Out of the box scheduling, logging, monitoring and data governance for your scala ETL jobs.
+
+![DataMover logo](Resources/logo.png)
 
 [![Build Status](https://travis-ci.org/JannikArndt/DataMover.svg?branch=master)](https://travis-ci.org/JannikArndt/DataMover)
 
@@ -34,14 +36,14 @@ object ExampleJob {
 
 class ExampleJob extends DataMover("ExampleJob") {
 
-    override def run(governedId: GovernedID): Unit = {
+    override def run(): Unit = {
         // here you can access
         // - logger => Log debug, info or error information
         // - monitor => track throughput
         // - governedId => append this to your output to find the job that generated it
 
         // Logging
-        logger.info("Logs are aggregated per run")
+        logger.info(s"Logs are aggregated per run. These are for Job ${governedId.identifier}.")
 
         // Write you own EXTRACT-function
 
@@ -57,6 +59,14 @@ class ExampleJob extends DataMover("ExampleJob") {
     }
 }
 ```
+
+Then head to [http://localhost:55555](http://localhost:55555) (and increasing for every additional job):
+
+![Monitoring Screenshot](Resources/monitoring_screenshot.png)
+
+### Monitoring with Prometheus
+
+[Prometheus](https://prometheus.io/download/) can read directly from DataMover jobs. Just add the `targets: ['localhost:55555']` to your `prometheus.yml`!
 
 ### License
 
@@ -74,7 +84,6 @@ This code is open source software licensed under the [MIT License](LICENSE).
 - Central server to monitor all jobs:
 ![Monitoring Idea](Resources/monitoring_idea.png)
 
-- Interface for Prometheus/Grafana
 - Interface for Elastic/Kibana
 - Interface for Jolokia
 
@@ -85,9 +94,15 @@ Releases are deployed at [maven.org](https://repo1.maven.org/maven2/de/jannikarn
 
 ### Changes
 
+#### v1.3.0
+- Support for Prometheus
+- Jobs automatically choose a free port, starting at 55555
+- LogLevel coloring
+- GovernedId can be accessed anywhere in class
+
 #### v1.2.0
 - Logger now supports ERROR, WARN and DEBUG
-- Governor write valid json
+- Governor writes valid json
 - artifact id contains scala version
 
 #### v1.1.0
